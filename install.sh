@@ -1,4 +1,4 @@
-err = "error attempting to download from the github repository"
+err="error attempting to download from the github repository"
 check_cmd() {
 	command -v "$1" >/dev/null 2>&1
 }
@@ -20,4 +20,4 @@ download() {
 mkdir -p $HOME/.anonymiser/bin
 download https://github.com/nationalarchives/dr2-court-document-package-anonymiser/releases/latest/download/anonymiser > $HOME/.anonymiser/bin/anonymiser
 chmod +x $HOME/.anonymiser/bin/anonymiser
-
+echo "anonymiser installed at $HOME/.anonymiser/bin. Add this to your \$PATH"
