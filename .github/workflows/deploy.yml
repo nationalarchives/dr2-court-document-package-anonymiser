@@ -17,6 +17,6 @@ jobs:
           cargo build --release
           git tag ${{ steps.next-tag.outputs.next-version }}
           git push origin ${{ steps.next-tag.outputs.next-version }}
-          gh release create ${{ steps.next-tag.outputs.next-version }} target/release/anonymisers
+          gh release create ${{ steps.next-tag.outputs.next-version }} target/release/anonymiser
         env:
           GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
