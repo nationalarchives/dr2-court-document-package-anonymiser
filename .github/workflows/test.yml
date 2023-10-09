@@ -1,0 +1,11 @@
+name: DR2 Run Tests
+on:
+  push:
+    branches-ignore:
+      - main
+      - release-*
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      run: cargo test

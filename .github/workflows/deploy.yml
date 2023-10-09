@@ -1,0 +1,18 @@
+name: DR2 Release Binary
+on:
+  push:
+    branches-ignore:
+      - main
+      - release-*
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - id: next-tag
+        uses: nationalarchives/dr2-github-actions/.github/actions/get-next-version@main
+        with:
+          repo-name: dr2-court-document-package-anonymiser
+      - run: cargo build --release
+          git tag ${{ steps.next-tag.outputs.next-version }}
+          git push origin ${{ steps.next-tag.outputs.next-version }}
+          gh release create ${{ steps.next-tag.outputs.next-version }} target/release/anonymisers
