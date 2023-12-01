@@ -13,6 +13,8 @@ jobs:
     with:
       repo-name: dr2-court-document-package-anonymiser
       test-command: |
+        export AWS_ACCESS_KEY_ID=test
+        export AWS_SECRET_ACCESS_KEY=test
         cargo fmt --check
         cargo test --workspace
     secrets:
