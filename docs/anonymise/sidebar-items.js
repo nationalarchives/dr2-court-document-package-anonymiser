@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["files_in_input_dir","process_package"],"struct":["Opt"]};
