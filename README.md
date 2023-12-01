@@ -1,4 +1,8 @@
-# Anonymiser script
+# Court document anonymiser
+
+This repo is a [workspace](https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html) with four members 
+
+## Anonymiser script (lib)
 
 This script takes production judgment packages from TRE and anonymises them with the following steps:
 

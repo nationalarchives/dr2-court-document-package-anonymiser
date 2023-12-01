@@ -1,0 +1,13 @@
+[package]
+name = "testlib"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+assert_fs = "1.0.13"
+flate2 = "1.0.28"
+serde_json = "1.0.107"
+tar = "0.4.40"
