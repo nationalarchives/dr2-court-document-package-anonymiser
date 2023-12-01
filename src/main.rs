@@ -87,7 +87,7 @@ mod test {
         let output = TempDir::new().unwrap().to_str().unwrap().to_string();
         let opt = Opt { input, output };
         let files_result = files_from_input_arguments(opt);
-        let files = files_result.files;
+        let mut files = files_result.files;
 
         fn get_file_name(file_path: &Path) -> &str {
             file_path
@@ -96,9 +96,11 @@ mod test {
                 .unwrap()
         }
 
+        let _ = &files.sort();
+
         assert_eq!(files.len(), 3);
-        assert_eq!(get_file_name(&files[0]), "file3");
+        assert_eq!(get_file_name(&files[0]), "file1");
         assert_eq!(get_file_name(&files[1]), "file2");
-        assert_eq!(get_file_name(&files[2]), "file1")
+        assert_eq!(get_file_name(&files[2]), "file3")
     }
 }
