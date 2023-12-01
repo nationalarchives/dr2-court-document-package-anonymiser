@@ -1,3 +1,6 @@
+//! ## Court document package anonymiser library
+//!
+//! This library contains common code shared between the anonymiser script and the lambda.
 use clap::Parser;
 use docx_rs::*;
 use flate2::{read::GzDecoder, write::GzEncoder, Compression};
@@ -9,6 +12,7 @@ use std::io::ErrorKind;
 use std::{fs, fs::File, io, io::Error, io::Read, path::Path, path::PathBuf};
 use tar::{Archive, Builder};
 
+/// # A struct representing the input arguments
 #[derive(Parser)]
 #[clap(name = "anonymiser")]
 pub struct Opt {
@@ -21,7 +25,15 @@ pub struct Opt {
     pub output: String,
 }
 
-/// # Processes things
+/// # Package processor
+/// This takes an output directory path and a path to a tar.gz file as input and anonymises them with the following steps:
+///
+/// * It replaces Contact-Email and Contact-Name with XXXXXXX
+/// * It generates a new docx file which only contains the name of the judgment.
+/// * It updates the checksum field with the calculated checksum of the new docx file.
+/// * It renames the folder and metadata file from TDR-xxx to TST-xxx.
+/// * It creates a new tar.gz folder in the output directory.
+/// * It deletes the uncompressed folder in the output directory.
 pub fn process_package(dir_output: &PathBuf, file: &PathBuf) -> Result<PathBuf, Error> {
     let tar_gz_file_name: String = file
         .file_name()
@@ -88,6 +100,13 @@ pub fn process_package(dir_output: &PathBuf, file: &PathBuf) -> Result<PathBuf, 
     Ok(output_tar_gz_path)
 }
 
+/// # Creates a docx and returns a checksum
+///
+/// This creates a new docx file with the name parsed from the metadata filename.
+///
+/// It then writes the judgment name to the docx file and saves it to the output directory.
+///
+/// Finally, it generates a sha256 checksum for the new file and returns it.
 fn create_docx_with_checksum(
     extracted_output_path: &Path,
     metadata_json_value: &mut Value,
@@ -113,12 +132,15 @@ fn create_docx_with_checksum(
     Ok(docx_checksum)
 }
 
+/// # Helper function to delete a file if present
 fn if_present_delete(path: PathBuf) -> io::Result<()> {
     if path.exists() {
         remove_file(path)?
     }
     Ok(())
 }
+
+/// # Helper function to check if a file does not start with `.`
 fn is_not_hidden(entry: &DirEntry) -> bool {
     entry
         .file_name()
@@ -127,10 +149,15 @@ fn is_not_hidden(entry: &DirEntry) -> bool {
         .unwrap_or(false)
 }
 
+/// # Helper function to check if the entry is a file
 fn is_file(entry: &DirEntry) -> bool {
     !entry.path().is_dir()
 }
 
+/// # List files in input directory
+///
+/// This takes a directory path and returns a list of paths of all files on that level.
+/// It will not recursively search subdirectories.
 pub fn files_in_input_dir(directory_path: &PathBuf) -> Result<Vec<PathBuf>, Error> {
     let path_list: Vec<PathBuf> = fs::read_dir(directory_path)
         .unwrap()
@@ -146,6 +173,9 @@ pub fn files_in_input_dir(directory_path: &PathBuf) -> Result<Vec<PathBuf>, Erro
     Ok(path_list)
 }
 
+/// # Tars and Gzips the specified folder
+///
+/// This creates a tar file at `tar_path`, compresses everything in `path_to_compress` and names it with `folder_name`
 fn tar_folder(
     tar_path: &PathBuf,
     path_to_compress: &PathBuf,
@@ -158,6 +188,7 @@ fn tar_folder(
     Ok(())
 }
 
+/// # Anonymise the contact fields and update the checksum
 fn update_json_file(
     metadata_file_name: &PathBuf,
     checksum: String,
@@ -170,6 +201,7 @@ fn update_json_file(
     fs::write(metadata_file_name, json_value.to_string())
 }
 
+/// # Untar and unzip the input tar.gz file
 fn decompress_file(path_to_tar: &PathBuf, output_path: &PathBuf) -> Result<(), Error> {
     let tar_gz: File = File::open(path_to_tar)?;
     let tar: GzDecoder<File> = GzDecoder::new(tar_gz);
@@ -178,6 +210,7 @@ fn decompress_file(path_to_tar: &PathBuf, output_path: &PathBuf) -> Result<(), E
     Ok(())
 }
 
+/// # Read the metadata.json file and parse it into a serde `Value`
 fn parse_metadata_json(metadata_file_path: &PathBuf) -> Result<Value, Error> {
     let mut metadata_file: File = File::open(metadata_file_path)?;
     let mut metadata_json_as_string: String = String::new();

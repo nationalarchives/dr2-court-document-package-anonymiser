@@ -1,19 +1,49 @@
+//!## Anonymiser script
+//!
+//! This is a script to be used to anonymise files on the local disk.
+//!
+//! ## Install
+//! There is an [install.sh](./install.sh) script which will download the latest binary from GitHub and add it to `$HOME/.anonymiser/bin`.
+//! ```bash
+//! curl https://raw.githubusercontent.com/nationalarchives/dr2-court-document-package-anonymiser/main/install.sh | sh
+//! ```
+//! You will need to add `$HOME/.anonymiser/bin` to your $PATH.
+//!
+//! ## Running
+//! ```bash
+//! anonymiser --input /path/to/input --output /path/to/output
+//! ```
+//!
+//! ## Running with docker
+//! ```bash
+//! docker run -v /path/to/input:/input -v /path/to/output:/output public.ecr.aws/u4s1g5v1/anonymiser
+//! ```
+//!
+//! The input path must only contain the tar.gz files you're converting.
+//!
 use anonymise::*;
 use clap::Parser;
 use log::{self, LevelFilter};
 use simple_logger::SimpleLogger;
 use std::{path::PathBuf, process::exit};
 
+/// # The input files and output directory
 struct Files {
     dir_output: PathBuf,
     files: Vec<PathBuf>,
 }
+
+/// # Process the input arguments
+///
+/// Returns the `Files` struct with a list of files in the input directory and the output directory as a `PathBuf` struct.
 fn files_from_input_arguments(opt: Opt) -> Files {
     let dir_input: PathBuf = PathBuf::from(shellexpand::full(&opt.input).unwrap().to_string());
     let dir_output: PathBuf = PathBuf::from(shellexpand::full(&opt.output).unwrap().to_string());
     let files = files_in_input_dir(&dir_input).unwrap();
     Files { dir_output, files }
 }
+
+/// # The entrypoint for the anonymiser script
 fn main() {
     SimpleLogger::new()
         .with_level(LevelFilter::Info)

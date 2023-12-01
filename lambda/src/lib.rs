@@ -1,3 +1,22 @@
+//! Anonymiser lambda
+//!
+//! This lambda is used to convert incoming scripts from the TRE production bucket into anonymised packages
+//!
+//! Given the following input:
+//! ```json
+//! {
+//!   "parameters": {
+//!     "s3Bucket": "input-bucket",
+//!     "s3Key": "TRE-TDR-2023-ABC.tar.gz"
+//!   }
+//! }
+//! ```
+//! The lambda will:
+//! * Download the file from S3 to local disk
+//! * Anonymise it using the anonymise library
+//! * Upload it to S3 using the `OUTPUT_BUCKET` environment variable
+//! * Send the SQS message to the queue specified in the `OUTPUT_QUEUE` environment variable
+
 use anonymise::process_package;
 use aws_config::meta::region::RegionProviderChain;
 use aws_config::BehaviorVersion;
@@ -11,11 +30,15 @@ use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
 
+/// The bucket and key for the file we are processing
 struct S3Details {
     bucket: String,
     key: String,
 }
 
+/// # Parses the s3 input details
+///
+/// This will parse the SQS message body and returns the S3Details struct based on its values
 fn get_s3_details(record: &SqsMessage) -> Result<S3Details, Error> {
     let body = record
         .body
@@ -35,12 +58,15 @@ fn get_s3_details(record: &SqsMessage) -> Result<S3Details, Error> {
     })
 }
 
+/// # Processes the SQS message.
+///
+/// This will download the file specified in the message body, anonymise it, upload it to S3 and send the message on to the output queue.
 pub async fn process_record(
     record: &SqsMessage,
     working_directory: PathBuf,
     endpoint_url: Option<&str>,
 ) -> Result<PathBuf, Error> {
-    let client = create_client(endpoint_url).await;
+    let client = create_s3_client(endpoint_url).await;
     let s3_details = get_s3_details(&record)?;
 
     let input_file_path = download(
@@ -66,6 +92,9 @@ pub async fn process_record(
     return Ok(output_path.clone());
 }
 
+/// # Uploads the specified file
+///
+/// This will upload the contents of the file in `body_path` to the `bucket` with the specified `key`
 async fn upload(
     client: &Client,
     body_path: &PathBuf,
@@ -83,6 +112,9 @@ async fn upload(
     Ok(())
 }
 
+/// # Downloads the specified file
+///
+/// This downloads the contents of the file in the S3 `bucket` with the specified `key` into the `working_directory`
 async fn download(
     client: &Client,
     bucket: String,
@@ -101,7 +133,8 @@ async fn download(
     Ok(destination)
 }
 
-async fn create_client(potential_endpoint_url: Option<&str>) -> Client {
+/// # Creates an S3 client
+async fn create_s3_client(potential_endpoint_url: Option<&str>) -> Client {
     let endpoint_url = potential_endpoint_url.unwrap_or("https://s3.eu-west-2.amazonaws.com");
     let region_provider = RegionProviderChain::default_provider().or_else("eu-west-2");
 
@@ -115,12 +148,12 @@ async fn create_client(potential_endpoint_url: Option<&str>) -> Client {
 
 #[cfg(test)]
 mod test {
-    use crate::{create_client, get_s3_details};
+    use crate::{create_s3_client, get_s3_details};
     use aws_lambda_events::sqs::SqsMessage;
 
     #[tokio::test]
     async fn test_create_client_with_default_region() {
-        let client = create_client(None).await;
+        let client = create_s3_client(None).await;
         let config = client.config();
 
         assert_eq!(config.region().unwrap().to_string(), "eu-west-2");

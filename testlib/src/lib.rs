@@ -1,3 +1,6 @@
+//! # Test library functions
+//!
+//! These are common functions used in the integration tests for the script and for the lambda.
 use assert_fs::TempDir;
 use flate2::{read::GzDecoder, write::GzEncoder, Compression};
 use serde_json::Value;
@@ -6,12 +9,14 @@ use std::path::{Path, PathBuf};
 use tar::Archive;
 use tar::Builder;
 
+/// # Represents the fields to be anonymised
 pub struct MetadataJson {
     pub contact_email: String,
     pub contact_name: String,
     pub checksum: String,
 }
 
+/// # Creates a test tar.gz file
 pub fn create_package(input_dir: &TempDir, json: &str, file_name: Option<String>) -> PathBuf {
     let package_dir: PathBuf = input_dir.join(PathBuf::from("TDR-2023"));
     let tar_path: PathBuf = input_dir.join(PathBuf::from(
@@ -30,6 +35,7 @@ pub fn create_package(input_dir: &TempDir, json: &str, file_name: Option<String>
     tar_path
 }
 
+/// # Decompresses the test tar.gz file
 pub fn decompress_test_file(path_to_tar: &PathBuf, output_path: &TempDir) {
     let tar_gz: File = File::open(path_to_tar).unwrap();
     let tar: GzDecoder<File> = GzDecoder::new(tar_gz);
@@ -37,6 +43,7 @@ pub fn decompress_test_file(path_to_tar: &PathBuf, output_path: &TempDir) {
     archive.unpack(output_path).unwrap();
 }
 
+/// # Read the metadata.json file and parse the fields to be anonymised
 pub fn get_metadata_json_fields(output_dir: &Path) -> MetadataJson {
     let metadata: String = read_to_string(
         output_dir
@@ -48,6 +55,7 @@ pub fn get_metadata_json_fields(output_dir: &Path) -> MetadataJson {
     metadata_from_json_value(&json_value)
 }
 
+/// # Parse the fields from the json value
 fn metadata_from_json_value(json_value: &Value) -> MetadataJson {
     let tdr = json_value["parameters"]["TDR"].clone();
 
@@ -61,6 +69,7 @@ fn metadata_from_json_value(json_value: &Value) -> MetadataJson {
     }
 }
 
+/// # An input string with the filename missing
 pub fn json_missing_filename() -> &'static str {
     r#"
     {
@@ -76,6 +85,7 @@ pub fn json_missing_filename() -> &'static str {
     "#
 }
 
+/// # An valid input string
 pub fn valid_json() -> &'static str {
     r#"
     {
