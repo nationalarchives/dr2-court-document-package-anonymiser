@@ -313,7 +313,41 @@
 <a href="#313" id="313">313</a>
 <a href="#314" id="314">314</a>
 <a href="#315" id="315">315</a>
-</pre></div><pre class="rust"><code><span class="doccomment">/// # Something happens
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
+<a href="#326" id="326">326</a>
+<a href="#327" id="327">327</a>
+<a href="#328" id="328">328</a>
+<a href="#329" id="329">329</a>
+<a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a>
+<a href="#333" id="333">333</a>
+<a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
+<a href="#336" id="336">336</a>
+<a href="#337" id="337">337</a>
+<a href="#338" id="338">338</a>
+<a href="#339" id="339">339</a>
+<a href="#340" id="340">340</a>
+<a href="#341" id="341">341</a>
+<a href="#342" id="342">342</a>
+<a href="#343" id="343">343</a>
+<a href="#344" id="344">344</a>
+<a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+</pre></div><pre class="rust"><code><span class="doccomment">//! ## Court document package anonymiser library
+//!
+//! This library contains common code shared between the anonymiser script and the lambda.
 </span><span class="kw">use </span>clap::Parser;
 <span class="kw">use </span>docx_rs::<span class="kw-2">*</span>;
 <span class="kw">use </span>flate2::{read::GzDecoder, write::GzEncoder, Compression};
@@ -325,7 +359,8 @@
 <span class="kw">use </span>std::{fs, fs::File, io, io::Error, io::Read, path::Path, path::PathBuf};
 <span class="kw">use </span>tar::{Archive, Builder};
 
-<span class="attr">#[derive(Parser)]
+<span class="doccomment">/// # A struct representing the input arguments
+</span><span class="attr">#[derive(Parser)]
 #[clap(name = <span class="string">&quot;anonymiser&quot;</span>)]
 </span><span class="kw">pub struct </span>Opt {
     <span class="doccomment">/// Input folder
@@ -337,7 +372,15 @@
     </span><span class="kw">pub </span>output: String,
 }
 
-<span class="doccomment">/// # Processes things
+<span class="doccomment">/// # Package processor
+/// This takes an output directory path and a path to a tar.gz file as input and anonymises them with the following steps:
+///
+/// * It replaces Contact-Email and Contact-Name with XXXXXXX
+/// * It generates a new docx file which only contains the name of the judgment.
+/// * It updates the checksum field with the calculated checksum of the new docx file.
+/// * It renames the folder and metadata file from TDR-xxx to TST-xxx.
+/// * It creates a new tar.gz folder in the output directory.
+/// * It deletes the uncompressed folder in the output directory.
 </span><span class="kw">pub fn </span>process_package(dir_output: <span class="kw-2">&amp;</span>PathBuf, file: <span class="kw-2">&amp;</span>PathBuf) -&gt; <span class="prelude-ty">Result</span>&lt;PathBuf, Error&gt; {
     <span class="kw">let </span>tar_gz_file_name: String = file
         .file_name()
@@ -404,7 +447,14 @@
     <span class="prelude-val">Ok</span>(output_tar_gz_path)
 }
 
-<span class="kw">fn </span>create_docx_with_checksum(
+<span class="doccomment">/// # Creates a docx and returns a checksum
+///
+/// This creates a new docx file with the name parsed from the metadata filename.
+///
+/// It then writes the judgment name to the docx file and saves it to the output directory.
+///
+/// Finally, it generates a sha256 checksum for the new file and returns it.
+</span><span class="kw">fn </span>create_docx_with_checksum(
     extracted_output_path: <span class="kw-2">&amp;</span>Path,
     metadata_json_value: <span class="kw-2">&amp;mut </span>Value,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;String, Error&gt; {
@@ -429,13 +479,16 @@
     <span class="prelude-val">Ok</span>(docx_checksum)
 }
 
-<span class="kw">fn </span>if_present_delete(path: PathBuf) -&gt; io::Result&lt;()&gt; {
+<span class="doccomment">/// # Helper function to delete a file if present
+</span><span class="kw">fn </span>if_present_delete(path: PathBuf) -&gt; io::Result&lt;()&gt; {
     <span class="kw">if </span>path.exists() {
         remove_file(path)<span class="question-mark">?
     </span>}
     <span class="prelude-val">Ok</span>(())
 }
-<span class="kw">fn </span>is_not_hidden(entry: <span class="kw-2">&amp;</span>DirEntry) -&gt; bool {
+
+<span class="doccomment">/// # Helper function to check if a file does not start with `.`
+</span><span class="kw">fn </span>is_not_hidden(entry: <span class="kw-2">&amp;</span>DirEntry) -&gt; bool {
     entry
         .file_name()
         .to_str()
@@ -443,11 +496,16 @@
         .unwrap_or(<span class="bool-val">false</span>)
 }
 
-<span class="kw">fn </span>is_file(entry: <span class="kw-2">&amp;</span>DirEntry) -&gt; bool {
+<span class="doccomment">/// # Helper function to check if the entry is a file
+</span><span class="kw">fn </span>is_file(entry: <span class="kw-2">&amp;</span>DirEntry) -&gt; bool {
     !entry.path().is_dir()
 }
 
-<span class="kw">pub fn </span>files_in_input_dir(directory_path: <span class="kw-2">&amp;</span>PathBuf) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;PathBuf&gt;, Error&gt; {
+<span class="doccomment">/// # List files in input directory
+///
+/// This takes a directory path and returns a list of paths of all files on that level.
+/// It will not recursively search subdirectories.
+</span><span class="kw">pub fn </span>files_in_input_dir(directory_path: <span class="kw-2">&amp;</span>PathBuf) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;PathBuf&gt;, Error&gt; {
     <span class="kw">let </span>path_list: Vec&lt;PathBuf&gt; = fs::read_dir(directory_path)
         .unwrap()
         .filter_map(|e| {
@@ -462,7 +520,10 @@
     <span class="prelude-val">Ok</span>(path_list)
 }
 
-<span class="kw">fn </span>tar_folder(
+<span class="doccomment">/// # Tars and Gzips the specified folder
+///
+/// This creates a tar file at `tar_path`, compresses everything in `path_to_compress` and names it with `folder_name`
+</span><span class="kw">fn </span>tar_folder(
     tar_path: <span class="kw-2">&amp;</span>PathBuf,
     path_to_compress: <span class="kw-2">&amp;</span>PathBuf,
     folder_name: <span class="kw-2">&amp;</span>String,
@@ -474,7 +535,8 @@
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="kw">fn </span>update_json_file(
+<span class="doccomment">/// # Anonymise the contact fields and update the checksum
+</span><span class="kw">fn </span>update_json_file(
     metadata_file_name: <span class="kw-2">&amp;</span>PathBuf,
     checksum: String,
     json_value: <span class="kw-2">&amp;mut </span>Value,
@@ -486,7 +548,8 @@
     fs::write(metadata_file_name, json_value.to_string())
 }
 
-<span class="kw">fn </span>decompress_file(path_to_tar: <span class="kw-2">&amp;</span>PathBuf, output_path: <span class="kw-2">&amp;</span>PathBuf) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+<span class="doccomment">/// # Untar and unzip the input tar.gz file
+</span><span class="kw">fn </span>decompress_file(path_to_tar: <span class="kw-2">&amp;</span>PathBuf, output_path: <span class="kw-2">&amp;</span>PathBuf) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
     <span class="kw">let </span>tar_gz: File = File::open(path_to_tar)<span class="question-mark">?</span>;
     <span class="kw">let </span>tar: GzDecoder&lt;File&gt; = GzDecoder::new(tar_gz);
     <span class="kw">let </span><span class="kw-2">mut </span>archive: Archive&lt;GzDecoder&lt;File&gt;&gt; = Archive::new(tar);
@@ -494,7 +557,8 @@
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="kw">fn </span>parse_metadata_json(metadata_file_path: <span class="kw-2">&amp;</span>PathBuf) -&gt; <span class="prelude-ty">Result</span>&lt;Value, Error&gt; {
+<span class="doccomment">/// # Read the metadata.json file and parse it into a serde `Value`
+</span><span class="kw">fn </span>parse_metadata_json(metadata_file_path: <span class="kw-2">&amp;</span>PathBuf) -&gt; <span class="prelude-ty">Result</span>&lt;Value, Error&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>metadata_file: File = File::open(metadata_file_path)<span class="question-mark">?</span>;
     <span class="kw">let </span><span class="kw-2">mut </span>metadata_json_as_string: String = String::new();
     metadata_file.read_to_string(<span class="kw-2">&amp;mut </span>metadata_json_as_string)<span class="question-mark">?</span>;

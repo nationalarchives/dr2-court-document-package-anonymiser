@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["process_record"]};
+window.SIDEBAR_ITEMS = {"fn":["create_s3_client","download","get_s3_details","process_record","upload"],"struct":["S3Details"]};

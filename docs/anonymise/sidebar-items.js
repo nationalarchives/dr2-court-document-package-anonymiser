@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["files_in_input_dir","process_package"],"struct":["Opt"]};
+window.SIDEBAR_ITEMS = {"fn":["create_docx_with_checksum","decompress_file","files_in_input_dir","if_present_delete","is_file","is_not_hidden","parse_metadata_json","process_package","tar_folder","update_json_file"],"struct":["Opt"]};

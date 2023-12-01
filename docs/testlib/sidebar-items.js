@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["create_package","decompress_test_file","get_metadata_json_fields","json_missing_filename","valid_json"],"struct":["MetadataJson"]};
+window.SIDEBAR_ITEMS = {"fn":["create_package","decompress_test_file","get_metadata_json_fields","json_missing_filename","metadata_from_json_value","valid_json"],"struct":["MetadataJson"]};

@@ -72,23 +72,83 @@
 <a href="#72" id="72">72</a>
 <a href="#73" id="73">73</a>
 <a href="#74" id="74">74</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>anonymise::<span class="kw-2">*</span>;
+<a href="#75" id="75">75</a>
+<a href="#76" id="76">76</a>
+<a href="#77" id="77">77</a>
+<a href="#78" id="78">78</a>
+<a href="#79" id="79">79</a>
+<a href="#80" id="80">80</a>
+<a href="#81" id="81">81</a>
+<a href="#82" id="82">82</a>
+<a href="#83" id="83">83</a>
+<a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
+<a href="#86" id="86">86</a>
+<a href="#87" id="87">87</a>
+<a href="#88" id="88">88</a>
+<a href="#89" id="89">89</a>
+<a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
+<a href="#98" id="98">98</a>
+<a href="#99" id="99">99</a>
+<a href="#100" id="100">100</a>
+<a href="#101" id="101">101</a>
+<a href="#102" id="102">102</a>
+<a href="#103" id="103">103</a>
+<a href="#104" id="104">104</a>
+</pre></div><pre class="rust"><code><span class="doccomment">//!## Anonymiser script
+//!
+//! This is a script to be used to anonymise files on the local disk.
+//!
+//! ## Install
+//! There is an [install.sh](./install.sh) script which will download the latest binary from GitHub and add it to `$HOME/.anonymiser/bin`.
+//! ```bash
+//! curl https://raw.githubusercontent.com/nationalarchives/dr2-court-document-package-anonymiser/main/install.sh | sh
+//! ```
+//! You will need to add `$HOME/.anonymiser/bin` to your $PATH.
+//!
+//! ## Running
+//! ```bash
+//! anonymiser --input /path/to/input --output /path/to/output
+//! ```
+//!
+//! ## Running with docker
+//! ```bash
+//! docker run -v /path/to/input:/input -v /path/to/output:/output public.ecr.aws/u4s1g5v1/anonymiser
+//! ```
+//!
+//! The input path must only contain the tar.gz files you&#39;re converting.
+//!
+</span><span class="kw">use </span>anonymise::<span class="kw-2">*</span>;
 <span class="kw">use </span>clap::Parser;
 <span class="kw">use </span>log::{<span class="self">self</span>, LevelFilter};
 <span class="kw">use </span>simple_logger::SimpleLogger;
 <span class="kw">use </span>std::{path::PathBuf, process::exit};
 
-<span class="kw">struct </span>Files {
+<span class="doccomment">/// # The input files and output directory
+</span><span class="kw">struct </span>Files {
     dir_output: PathBuf,
     files: Vec&lt;PathBuf&gt;,
 }
-<span class="kw">fn </span>files_from_input_arguments(opt: Opt) -&gt; Files {
+
+<span class="doccomment">/// # Process the input arguments
+///
+/// Returns the `Files` struct with a list of files in the input directory and the output directory as a `PathBuf` struct.
+</span><span class="kw">fn </span>files_from_input_arguments(opt: Opt) -&gt; Files {
     <span class="kw">let </span>dir_input: PathBuf = PathBuf::from(shellexpand::full(<span class="kw-2">&amp;</span>opt.input).unwrap().to_string());
     <span class="kw">let </span>dir_output: PathBuf = PathBuf::from(shellexpand::full(<span class="kw-2">&amp;</span>opt.output).unwrap().to_string());
     <span class="kw">let </span>files = files_in_input_dir(<span class="kw-2">&amp;</span>dir_input).unwrap();
     Files { dir_output, files }
 }
-<span class="kw">fn </span>main() {
+
+<span class="doccomment">/// # The entrypoint for the anonymiser script
+</span><span class="kw">fn </span>main() {
     SimpleLogger::new()
         .with_level(LevelFilter::Info)
         .init()

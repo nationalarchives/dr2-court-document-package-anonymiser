@@ -140,7 +140,59 @@
 <a href="#140" id="140">140</a>
 <a href="#141" id="141">141</a>
 <a href="#142" id="142">142</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>anonymise::process_package;
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+</pre></div><pre class="rust"><code><span class="doccomment">//! Anonymiser lambda
+//!
+//! This lambda is used to convert incoming scripts from the TRE production bucket into anonymised packages
+//!
+//! Given the following input:
+//! ```json
+//! {
+//!   &quot;parameters&quot;: {
+//!     &quot;s3Bucket&quot;: &quot;input-bucket&quot;,
+//!     &quot;s3Key&quot;: &quot;TRE-TDR-2023-ABC.tar.gz&quot;
+//!   }
+//! }
+//! ```
+//! The lambda will:
+//! * Download the file from S3 to local disk
+//! * Anonymise it using the anonymise library
+//! * Upload it to S3 using the `OUTPUT_BUCKET` environment variable
+//! * Send the SQS message to the queue specified in the `OUTPUT_QUEUE` environment variable
+
+</span><span class="kw">use </span>anonymise::process_package;
 <span class="kw">use </span>aws_config::meta::region::RegionProviderChain;
 <span class="kw">use </span>aws_config::BehaviorVersion;
 <span class="kw">use </span>aws_lambda_events::sqs::SqsMessage;
@@ -153,12 +205,16 @@
 <span class="kw">use </span>std::io::Write;
 <span class="kw">use </span>std::path::PathBuf;
 
-<span class="kw">struct </span>S3Details {
+<span class="doccomment">/// The bucket and key for the file we are processing
+</span><span class="kw">struct </span>S3Details {
     bucket: String,
     key: String,
 }
 
-<span class="kw">fn </span>get_s3_details(record: <span class="kw-2">&amp;</span>SqsMessage) -&gt; <span class="prelude-ty">Result</span>&lt;S3Details, Error&gt; {
+<span class="doccomment">/// # Parses the s3 input details
+///
+/// This will parse the SQS message body and returns the S3Details struct based on its values
+</span><span class="kw">fn </span>get_s3_details(record: <span class="kw-2">&amp;</span>SqsMessage) -&gt; <span class="prelude-ty">Result</span>&lt;S3Details, Error&gt; {
     <span class="kw">let </span>body = record
         .body
         .as_ref()
@@ -177,12 +233,15 @@
     })
 }
 
-<span class="kw">pub async fn </span>process_record(
+<span class="doccomment">/// # Processes the SQS message.
+///
+/// This will download the file specified in the message body, anonymise it, upload it to S3 and send the message on to the output queue.
+</span><span class="kw">pub async fn </span>process_record(
     record: <span class="kw-2">&amp;</span>SqsMessage,
     working_directory: PathBuf,
     endpoint_url: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;PathBuf, Error&gt; {
-    <span class="kw">let </span>client = create_client(endpoint_url).<span class="kw">await</span>;
+    <span class="kw">let </span>client = create_s3_client(endpoint_url).<span class="kw">await</span>;
     <span class="kw">let </span>s3_details = get_s3_details(<span class="kw-2">&amp;</span>record)<span class="question-mark">?</span>;
 
     <span class="kw">let </span>input_file_path = download(
@@ -208,7 +267,10 @@
     <span class="kw">return </span><span class="prelude-val">Ok</span>(output_path.clone());
 }
 
-<span class="kw">async fn </span>upload(
+<span class="doccomment">/// # Uploads the specified file
+///
+/// This will upload the contents of the file in `body_path` to the `bucket` with the specified `key`
+</span><span class="kw">async fn </span>upload(
     client: <span class="kw-2">&amp;</span>Client,
     body_path: <span class="kw-2">&amp;</span>PathBuf,
     bucket: <span class="kw-2">&amp;</span>str,
@@ -225,7 +287,10 @@
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="kw">async fn </span>download(
+<span class="doccomment">/// # Downloads the specified file
+///
+/// This downloads the contents of the file in the S3 `bucket` with the specified `key` into the `working_directory`
+</span><span class="kw">async fn </span>download(
     client: <span class="kw-2">&amp;</span>Client,
     bucket: String,
     key: String,
@@ -243,7 +308,8 @@
     <span class="prelude-val">Ok</span>(destination)
 }
 
-<span class="kw">async fn </span>create_client(potential_endpoint_url: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;) -&gt; Client {
+<span class="doccomment">/// # Creates an S3 client
+</span><span class="kw">async fn </span>create_s3_client(potential_endpoint_url: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;) -&gt; Client {
     <span class="kw">let </span>endpoint_url = potential_endpoint_url.unwrap_or(<span class="string">&quot;https://s3.eu-west-2.amazonaws.com&quot;</span>);
     <span class="kw">let </span>region_provider = RegionProviderChain::default_provider().or_else(<span class="string">&quot;eu-west-2&quot;</span>);
 
@@ -257,12 +323,12 @@
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>test {
-    <span class="kw">use crate</span>::{create_client, get_s3_details};
+    <span class="kw">use crate</span>::{create_s3_client, get_s3_details};
     <span class="kw">use </span>aws_lambda_events::sqs::SqsMessage;
 
     <span class="attr">#[tokio::test]
     </span><span class="kw">async fn </span>test_create_client_with_default_region() {
-        <span class="kw">let </span>client = create_client(<span class="prelude-val">None</span>).<span class="kw">await</span>;
+        <span class="kw">let </span>client = create_s3_client(<span class="prelude-val">None</span>).<span class="kw">await</span>;
         <span class="kw">let </span>config = client.config();
 
         <span class="macro">assert_eq!</span>(config.region().unwrap().to_string(), <span class="string">&quot;eu-west-2&quot;</span>);
