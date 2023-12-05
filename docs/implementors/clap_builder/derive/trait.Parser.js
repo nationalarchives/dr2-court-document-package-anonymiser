@@ -1,3 +1,3 @@
 (function() {var implementors = {
-"anonymise":[["impl Parser for <a class=\"struct\" href=\"anonymise/struct.Opt.html\" title=\"struct anonymise::Opt\">Opt</a>"]]
+"anonymiser_lib":[["impl Parser for <a class=\"struct\" href=\"anonymiser_lib/struct.Opt.html\" title=\"struct anonymiser_lib::Opt\">Opt</a>"]]
 };if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

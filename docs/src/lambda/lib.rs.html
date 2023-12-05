@@ -173,6 +173,33 @@
 <a href="#173" id="173">173</a>
 <a href="#174" id="174">174</a>
 <a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Anonymiser lambda
 //!
 //! This lambda is used to convert incoming scripts from the TRE production bucket into anonymised packages
@@ -192,86 +219,97 @@
 //! * Upload it to S3 using the `OUTPUT_BUCKET` environment variable
 //! * Send the SQS message to the queue specified in the `OUTPUT_QUEUE` environment variable
 
-</span><span class="kw">use </span>anonymise::process_package;
+</span><span class="kw">use </span>anonymiser_lib::process_package;
 <span class="kw">use </span>aws_config::meta::region::RegionProviderChain;
-<span class="kw">use </span>aws_config::BehaviorVersion;
+<span class="kw">use </span>aws_config::{BehaviorVersion, SdkConfig};
 <span class="kw">use </span>aws_lambda_events::sqs::SqsMessage;
 <span class="kw">use </span>aws_sdk_s3::primitives::ByteStream;
-<span class="kw">use </span>aws_sdk_s3::Client;
+<span class="kw">use </span>aws_sdk_s3::Client <span class="kw">as </span>S3Client;
+<span class="kw">use </span>aws_sdk_sqs::Client <span class="kw">as </span>SQSClient;
 <span class="kw">use </span>lambda_runtime::Error;
-<span class="kw">use </span>serde_json::Value;
+<span class="kw">use </span>serde::{Deserialize, Serialize};
 <span class="kw">use </span>std::fs;
 <span class="kw">use </span>std::fs::File;
 <span class="kw">use </span>std::io::Write;
-<span class="kw">use </span>std::path::PathBuf;
+<span class="kw">use </span>std::path::{Path, PathBuf};
 
 <span class="doccomment">/// The bucket and key for the file we are processing
-</span><span class="kw">struct </span>S3Details {
-    bucket: String,
-    key: String,
+</span><span class="attr">#[derive(Deserialize, Serialize)]
+</span><span class="kw">struct </span>MessageBody {
+    parameters: S3Details,
 }
 
-<span class="doccomment">/// # Parses the s3 input details
-///
-/// This will parse the SQS message body and returns the S3Details struct based on its values
-</span><span class="kw">fn </span>get_s3_details(record: <span class="kw-2">&amp;</span>SqsMessage) -&gt; <span class="prelude-ty">Result</span>&lt;S3Details, Error&gt; {
-    <span class="kw">let </span>body = record
-        .body
-        .as_ref()
-        .ok_or(<span class="string">&quot;No body found in the SQS message&quot;</span>)<span class="question-mark">?</span>;
-    <span class="kw">let </span>json: Value = serde_json::from_str(<span class="kw-2">&amp;</span>body)<span class="question-mark">?</span>;
-    <span class="kw">let </span>parameters = <span class="kw-2">&amp;</span>json[<span class="string">&quot;parameters&quot;</span>];
-    <span class="kw">let </span>bucket = <span class="kw-2">&amp;</span>parameters[<span class="string">&quot;s3Bucket&quot;</span>]
-        .as_str()
-        .ok_or(<span class="string">&quot;s3Bucket missing from input&quot;</span>)<span class="question-mark">?</span>;
-    <span class="kw">let </span>key = <span class="kw-2">&amp;</span>parameters[<span class="string">&quot;s3Key&quot;</span>]
-        .as_str()
-        .ok_or(<span class="string">&quot;s3Key missing from input&quot;</span>)<span class="question-mark">?</span>;
-    <span class="prelude-val">Ok</span>(S3Details {
-        bucket: bucket.to_string(),
-        key: key.to_string(),
-    })
+<span class="attr">#[derive(Deserialize, Serialize)]
+#[serde(rename_all = <span class="string">&quot;camelCase&quot;</span>)]
+</span><span class="kw">struct </span>S3Details {
+    status: String,
+    reference: String,
+    s3_bucket: String,
+    s3_key: String,
 }
 
 <span class="doccomment">/// # Processes the SQS message.
 ///
 /// This will download the file specified in the message body, anonymise it, upload it to S3 and send the message on to the output queue.
 </span><span class="kw">pub async fn </span>process_record(
-    record: <span class="kw-2">&amp;</span>SqsMessage,
+    message: <span class="kw-2">&amp;</span>SqsMessage,
     working_directory: PathBuf,
-    endpoint_url: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;,
+    s3_endpoint_url: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;,
+    sqs_endpoint_url: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;PathBuf, Error&gt; {
-    <span class="kw">let </span>client = create_s3_client(endpoint_url).<span class="kw">await</span>;
-    <span class="kw">let </span>s3_details = get_s3_details(<span class="kw-2">&amp;</span>record)<span class="question-mark">?</span>;
+    <span class="kw">let </span>body = message
+        .body
+        .as_ref()
+        .ok_or(<span class="string">&quot;No body found in the SQS message&quot;</span>)<span class="question-mark">?</span>;
+    <span class="kw">let </span>s3_client = create_s3_client(s3_endpoint_url).<span class="kw">await</span>;
+    <span class="kw">let </span>sqs_client = create_sqs_client(sqs_endpoint_url).<span class="kw">await</span>;
 
+    <span class="kw">let </span>message_body: MessageBody = serde_json::from_str(body)<span class="question-mark">?</span>;
+    <span class="kw">let </span>parameters = message_body.parameters;
     <span class="kw">let </span>input_file_path = download(
-        <span class="kw-2">&amp;</span>client,
-        s3_details.bucket,
-        s3_details.key,
+        <span class="kw-2">&amp;</span>s3_client,
+        parameters.s3_bucket,
+        parameters.s3_key,
         <span class="kw-2">&amp;</span>working_directory,
     )
-    .<span class="kw">await
-    </span>.map_err(|<span class="kw">_</span>| <span class="string">&quot;Error downloading file from S3&quot;</span>)<span class="question-mark">?</span>;
+    .<span class="kw">await</span><span class="question-mark">?</span>;
     <span class="kw">let </span>output_path = <span class="kw-2">&amp;</span>working_directory.join(PathBuf::from(<span class="string">&quot;output&quot;</span>));
     fs::create_dir_all(output_path)<span class="question-mark">?</span>;
     <span class="kw">let </span>output_tar_path = process_package(output_path, <span class="kw-2">&amp;</span>input_file_path)<span class="question-mark">?</span>;
     <span class="kw">let </span>file_name = output_tar_path
         .file_name()
-        .and_then(|oss| oss.to_str())
+        .and_then(|file_name_as_os_string| file_name_as_os_string.to_str())
         .expect(<span class="string">&quot;Cannot parse file name from output path&quot;</span>);
 
     <span class="kw">let </span>output_bucket = std::env::var(<span class="string">&quot;OUTPUT_BUCKET&quot;</span>)<span class="question-mark">?</span>;
-    upload(<span class="kw-2">&amp;</span>client, <span class="kw-2">&amp;</span>output_tar_path, <span class="kw-2">&amp;</span>output_bucket, file_name)
-        .<span class="kw">await
-        </span>.map_err(|<span class="kw">_</span>| <span class="string">&quot;Error uploading file to S3&quot;</span>)<span class="question-mark">?</span>;
-    <span class="kw">return </span><span class="prelude-val">Ok</span>(output_path.clone());
+    upload(<span class="kw-2">&amp;</span>s3_client, <span class="kw-2">&amp;</span>output_tar_path, <span class="kw-2">&amp;</span>output_bucket, file_name).<span class="kw">await</span><span class="question-mark">?</span>;
+
+    <span class="kw">let </span>output_queue = std::env::var(<span class="string">&quot;OUTPUT_QUEUE&quot;</span>)<span class="question-mark">?</span>;
+    <span class="kw">let </span>reference = parameters.reference.replace(<span class="string">&quot;TDR&quot;</span>, <span class="string">&quot;TST&quot;</span>);
+    <span class="kw">let </span>status = parameters.status;
+    <span class="kw">let </span>output_message_body = MessageBody {
+        parameters: S3Details {
+            s3_bucket: output_bucket,
+            s3_key: file_name.to_string(),
+            status,
+            reference,
+        },
+    };
+    <span class="kw">let </span>message_string = serde_json::to_string(<span class="kw-2">&amp;</span>output_message_body)<span class="question-mark">?</span>;
+    <span class="kw">let _ </span>= sqs_client
+        .send_message()
+        .queue_url(<span class="kw-2">&amp;</span>output_queue)
+        .message_body(message_string)
+        .send()
+        .<span class="kw">await</span><span class="question-mark">?</span>;
+    <span class="prelude-val">Ok</span>(output_path.clone())
 }
 
 <span class="doccomment">/// # Uploads the specified file
 ///
 /// This will upload the contents of the file in `body_path` to the `bucket` with the specified `key`
 </span><span class="kw">async fn </span>upload(
-    client: <span class="kw-2">&amp;</span>Client,
+    client: <span class="kw-2">&amp;</span>S3Client,
     body_path: <span class="kw-2">&amp;</span>PathBuf,
     bucket: <span class="kw-2">&amp;</span>str,
     key: <span class="kw-2">&amp;</span>str,
@@ -291,12 +329,16 @@
 ///
 /// This downloads the contents of the file in the S3 `bucket` with the specified `key` into the `working_directory`
 </span><span class="kw">async fn </span>download(
-    client: <span class="kw-2">&amp;</span>Client,
+    client: <span class="kw-2">&amp;</span>S3Client,
     bucket: String,
     key: String,
-    working_directory: <span class="kw-2">&amp;</span>PathBuf,
+    working_directory: <span class="kw-2">&amp;</span>Path,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;PathBuf, Error&gt; {
     <span class="kw">let </span>destination = working_directory.join(PathBuf::from(<span class="kw-2">&amp;</span>key));
+    <span class="kw">let </span><span class="kw-2">mut </span>destination_path = destination.clone();
+    destination_path.pop();
+    fs::create_dir_all(<span class="kw-2">&amp;</span>destination_path)<span class="question-mark">?</span>;
+
     <span class="kw">let </span><span class="kw-2">mut </span>file = File::create(<span class="kw-2">&amp;</span>destination)<span class="question-mark">?</span>;
 
     <span class="kw">let </span><span class="kw-2">mut </span>object = client.get_object().bucket(bucket).key(<span class="kw-2">&amp;</span>key).send().<span class="kw">await</span><span class="question-mark">?</span>;
@@ -308,23 +350,34 @@
     <span class="prelude-val">Ok</span>(destination)
 }
 
-<span class="doccomment">/// # Creates an S3 client
-</span><span class="kw">async fn </span>create_s3_client(potential_endpoint_url: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;) -&gt; Client {
-    <span class="kw">let </span>endpoint_url = potential_endpoint_url.unwrap_or(<span class="string">&quot;https://s3.eu-west-2.amazonaws.com&quot;</span>);
+<span class="doccomment">/// # Creates an SQS client
+</span><span class="kw">async fn </span>create_sqs_client(potential_endpoint_url: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;) -&gt; SQSClient {
+    <span class="kw">let </span>config = aws_config(<span class="string">&quot;sqs&quot;</span>, potential_endpoint_url).<span class="kw">await</span>;
+    SQSClient::new(<span class="kw-2">&amp;</span>config)
+}
+
+<span class="doccomment">/// # Creates an AWS SDK config object
+</span><span class="kw">async fn </span>aws_config(service: <span class="kw-2">&amp;</span>str, potential_endpoint_url: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;) -&gt; SdkConfig {
+    <span class="kw">let </span>default_endpoint = <span class="macro">format!</span>(<span class="string">&quot;https://{service}.eu-west-2.amazonaws.com&quot;</span>);
+    <span class="kw">let </span>endpoint_url = potential_endpoint_url.unwrap_or(default_endpoint.as_str());
     <span class="kw">let </span>region_provider = RegionProviderChain::default_provider().or_else(<span class="string">&quot;eu-west-2&quot;</span>);
 
-    <span class="kw">let </span>config = aws_config::defaults(BehaviorVersion::latest())
+    aws_config::defaults(BehaviorVersion::latest())
         .region(region_provider)
         .endpoint_url(endpoint_url)
         .load()
-        .<span class="kw">await</span>;
-    Client::new(<span class="kw-2">&amp;</span>config)
+        .<span class="kw">await
+</span>}
+
+<span class="doccomment">/// # Creates an S3 client
+</span><span class="kw">async fn </span>create_s3_client(potential_endpoint_url: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;) -&gt; S3Client {
+    <span class="kw">let </span>config = aws_config(<span class="string">&quot;s3&quot;</span>, potential_endpoint_url).<span class="kw">await</span>;
+    S3Client::new(<span class="kw-2">&amp;</span>config)
 }
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>test {
-    <span class="kw">use crate</span>::{create_s3_client, get_s3_details};
-    <span class="kw">use </span>aws_lambda_events::sqs::SqsMessage;
+    <span class="kw">use crate</span>::{aws_config, create_s3_client};
 
     <span class="attr">#[tokio::test]
     </span><span class="kw">async fn </span>test_create_client_with_default_region() {
@@ -335,17 +388,18 @@
     }
 
     <span class="attr">#[tokio::test]
-    </span><span class="kw">async fn </span>test_get_s3_details() {
-        <span class="kw">let </span>message = SqsMessage {
-            body: Option::from(
-                <span class="string">&quot;{\&quot;parameters\&quot;: {\&quot;s3Bucket\&quot;: \&quot;testBucket\&quot;, \&quot;s3Key\&quot;: \&quot;testKey\&quot;}}&quot;
-                    </span>.to_owned(),
-            ),
-            ..Default::default()
-        };
-        <span class="kw">let </span>details = get_s3_details(<span class="kw-2">&amp;</span>message).unwrap();
-        <span class="macro">assert_eq!</span>(details.bucket, <span class="string">&quot;testBucket&quot;</span>);
-        <span class="macro">assert_eq!</span>(details.key, <span class="string">&quot;testKey&quot;</span>);
+    </span><span class="kw">async fn </span>test_aws_config_endpoint_url() {
+        <span class="kw">let </span>config_default_endpoint = aws_config(<span class="string">&quot;test&quot;</span>, <span class="prelude-val">None</span>).<span class="kw">await</span>;
+        <span class="macro">assert_eq!</span>(
+            config_default_endpoint.endpoint_url().unwrap(),
+            <span class="string">&quot;https://test.eu-west-2.amazonaws.com&quot;
+        </span>);
+
+        <span class="kw">let </span>config_custom_endpoint = aws_config(<span class="string">&quot;test&quot;</span>, <span class="prelude-val">Some</span>(<span class="string">&quot;https://example.com&quot;</span>)).<span class="kw">await</span>;
+        <span class="macro">assert_eq!</span>(
+            config_custom_endpoint.endpoint_url().unwrap(),
+            <span class="string">&quot;https://example.com&quot;
+        </span>);
     }
 }
 </code></pre></div></section></main></body></html>

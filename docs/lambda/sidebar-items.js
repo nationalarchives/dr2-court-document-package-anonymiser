@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["create_s3_client","download","get_s3_details","process_record","upload"],"struct":["S3Details"]};
+window.SIDEBAR_ITEMS = {"fn":["aws_config","create_s3_client","create_sqs_client","download","process_record","upload"],"struct":["MessageBody","S3Details"]};

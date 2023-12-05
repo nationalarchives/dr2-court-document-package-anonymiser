@@ -1,1 +1,1 @@
-window.ALL_CRATES = ["anonymise","anonymiser","lambda","testlib"];
+window.ALL_CRATES = ["anonymiser","anonymiser_lib","lambda","testlib"];

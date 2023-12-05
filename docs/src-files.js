@@ -1,6 +1,6 @@
 var srcIndex = JSON.parse('{\
-"anonymise":["",[],["lib.rs"]],\
 "anonymiser":["",[],["main.rs"]],\
+"anonymiser_lib":["",[],["lib.rs"]],\
 "lambda":["",[],["lib.rs"]],\
 "testlib":["",[],["lib.rs"]]\
 }');

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `anonymise/src/lib.rs`."><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-fa3bb1812debf86c.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="anonymise" data-themes="" data-resource-suffix="" data-rustdoc-version="1.74.0 (79e9716c9 2023-11-13)" data-channel="1.74.0" data-search-js="search-8be46b629f5f14a8.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-c5bd66d33317d69f.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../anonymise/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `anonymiser_lib/src/lib.rs`."><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-fa3bb1812debf86c.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="anonymiser_lib" data-themes="" data-resource-suffix="" data-rustdoc-version="1.74.0 (79e9716c9 2023-11-13)" data-channel="1.74.0" data-search-js="search-8be46b629f5f14a8.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-c5bd66d33317d69f.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../anonymiser_lib/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -331,20 +331,6 @@
 <a href="#331" id="331">331</a>
 <a href="#332" id="332">332</a>
 <a href="#333" id="333">333</a>
-<a href="#334" id="334">334</a>
-<a href="#335" id="335">335</a>
-<a href="#336" id="336">336</a>
-<a href="#337" id="337">337</a>
-<a href="#338" id="338">338</a>
-<a href="#339" id="339">339</a>
-<a href="#340" id="340">340</a>
-<a href="#341" id="341">341</a>
-<a href="#342" id="342">342</a>
-<a href="#343" id="343">343</a>
-<a href="#344" id="344">344</a>
-<a href="#345" id="345">345</a>
-<a href="#346" id="346">346</a>
-<a href="#347" id="347">347</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! ## Court document package anonymiser library
 //!
 //! This library contains common code shared between the anonymiser script and the lambda.
@@ -375,7 +361,7 @@
 <span class="doccomment">/// # Package processor
 /// This takes an output directory path and a path to a tar.gz file as input and anonymises them with the following steps:
 ///
-/// * It replaces Contact-Email and Contact-Name with XXXXXXX
+/// * It replaces the values of Contact-Email and Contact-Name with XXXXXXX
 /// * It generates a new docx file which only contains the name of the judgment.
 /// * It updates the checksum field with the calculated checksum of the new docx file.
 /// * It renames the folder and metadata file from TDR-xxx to TST-xxx.
@@ -404,38 +390,41 @@
         dir_output.join(PathBuf::from(<span class="kw-2">&amp;</span>input_batch_reference));
     <span class="kw">let </span>extracted_output_path: PathBuf = dir_output.join(PathBuf::from(output_batch_reference));
 
+    <span class="kw">let </span>output_path_with_file = |file_name: <span class="kw-2">&amp;</span>str| -&gt; PathBuf {
+        <span class="kw">let </span>output_path = extracted_output_path.clone();
+        output_path.join(PathBuf::from(file_name))
+    };
+
     fs::create_dir_all(extracted_output_path.clone())<span class="question-mark">?</span>;
 
     decompress_file(file, dir_output)<span class="question-mark">?</span>;
 
-    <span class="kw">let </span>metadata_input_file_path: <span class="kw-2">&amp;</span>PathBuf = <span class="kw-2">&amp;</span>extracted_output_path.join(PathBuf::from(<span class="macro">format!</span>(
-        <span class="string">&quot;TRE-{input_batch_reference}-metadata.json&quot;
-    </span>)));
-    <span class="kw">let </span>metadata_output_file_path: <span class="kw-2">&amp;</span>PathBuf = <span class="kw-2">&amp;</span>extracted_output_path.join(PathBuf::from(<span class="macro">format!</span>(
-        <span class="string">&quot;TRE-{output_batch_reference}-metadata.json&quot;
-    </span>)));
+    <span class="kw">let </span>metadata_input_file_path: PathBuf =
+        output_path_with_file(<span class="macro">format!</span>(<span class="string">&quot;TRE-{input_batch_reference}-metadata.json&quot;</span>).as_str());
+    <span class="kw">let </span>metadata_output_file_path: PathBuf =
+        output_path_with_file(<span class="macro">format!</span>(<span class="string">&quot;TRE-{output_batch_reference}-metadata.json&quot;</span>).as_str());
 
     <span class="kw">if </span>extracted_output_path.exists() {
         fs::remove_dir_all(<span class="kw-2">&amp;</span>extracted_output_path)<span class="question-mark">?</span>;
     }
     fs::rename(extracted_output_original_name, <span class="kw-2">&amp;</span>extracted_output_path)<span class="question-mark">?</span>;
-    fs::rename(metadata_input_file_path, metadata_output_file_path)<span class="question-mark">?</span>;
+    fs::rename(metadata_input_file_path, <span class="kw-2">&amp;</span>metadata_output_file_path)<span class="question-mark">?</span>;
 
-    <span class="kw">let </span><span class="kw-2">mut </span>metadata_json_value: Value = parse_metadata_json(metadata_output_file_path)<span class="question-mark">?</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>metadata_json_value: Value = parse_metadata_json(<span class="kw-2">&amp;</span>metadata_output_file_path)<span class="question-mark">?</span>;
 
     <span class="kw">let </span>docx_checksum =
         create_docx_with_checksum(<span class="kw-2">&amp;</span>extracted_output_path, <span class="kw-2">&amp;mut </span>metadata_json_value)<span class="question-mark">?</span>;
 
     update_json_file(
-        metadata_output_file_path,
+        <span class="kw-2">&amp;</span>metadata_output_file_path,
         docx_checksum,
         <span class="kw-2">&amp;mut </span>metadata_json_value,
     )<span class="question-mark">?</span>;
 
-    if_present_delete(extracted_output_path.join(PathBuf::from(
-        <span class="macro">format!</span>(<span class="string">&quot;{}.xml&quot;</span>, input_batch_reference).as_str(),
-    )))<span class="question-mark">?</span>;
-    if_present_delete(extracted_output_path.join(PathBuf::from(<span class="string">&quot;parser.log&quot;</span>)))<span class="question-mark">?</span>;
+    if_present_delete(output_path_with_file(
+        <span class="macro">format!</span>(<span class="string">&quot;{input_batch_reference}.xml&quot;</span>).as_str(),
+    ))<span class="question-mark">?</span>;
+    if_present_delete(output_path_with_file(<span class="string">&quot;parser.log&quot;</span>))<span class="question-mark">?</span>;
 
     tar_folder(
         <span class="kw-2">&amp;</span>output_tar_gz_path,
@@ -443,7 +432,7 @@
         output_batch_reference,
     )<span class="question-mark">?</span>;
 
-    <span class="kw">let _ </span>= fs::remove_dir_all(<span class="kw-2">&amp;</span>extracted_output_path);
+    fs::remove_dir_all(<span class="kw-2">&amp;</span>extracted_output_path)<span class="question-mark">?</span>;
     <span class="prelude-val">Ok</span>(output_tar_gz_path)
 }
 
@@ -452,6 +441,7 @@
 /// This creates a new docx file with the name parsed from the metadata filename.
 ///
 /// It then writes the judgment name to the docx file and saves it to the output directory.
+/// If there is no judgment name, it uses the filename
 ///
 /// Finally, it generates a sha256 checksum for the new file and returns it.
 </span><span class="kw">fn </span>create_docx_with_checksum(
@@ -460,13 +450,12 @@
 ) -&gt; <span class="prelude-ty">Result</span>&lt;String, Error&gt; {
     <span class="kw">let </span>docx_file_name: <span class="kw-2">&amp;</span>str = metadata_json_value[<span class="string">&quot;parameters&quot;</span>][<span class="string">&quot;TRE&quot;</span>][<span class="string">&quot;payload&quot;</span>][<span class="string">&quot;filename&quot;</span>]
         .as_str()
-        .ok_or(<span class="string">&quot;Filename is missing from the metadata json&quot;</span>)
+        .ok_or(<span class="string">&quot;&#39;filename&#39; is missing from the metadata json&quot;</span>)
         .map_err(|e| Error::new(ErrorKind::InvalidInput, e))<span class="question-mark">?</span>;
 
     <span class="kw">let </span>judgment_name: <span class="kw-2">&amp;</span>str = metadata_json_value[<span class="string">&quot;parameters&quot;</span>][<span class="string">&quot;PARSER&quot;</span>][<span class="string">&quot;name&quot;</span>]
         .as_str()
-        .ok_or(<span class="string">&quot;Judgment name is missing from the metadata json&quot;</span>)
-        .map_err(|e| Error::new(ErrorKind::InvalidInput, e))<span class="question-mark">?</span>;
+        .unwrap_or(docx_file_name);
     <span class="kw">let </span>docx_path: PathBuf = extracted_output_path.join(PathBuf::from(docx_file_name));
 
     <span class="kw">let </span>file: File = File::create(<span class="kw-2">&amp;</span>docx_path)<span class="question-mark">?</span>;
@@ -604,25 +593,6 @@
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_create_docx_with_checksum_missing_metadata_name() {
-        <span class="kw">let </span>output_path = TempDir::new().unwrap();
-        <span class="kw">let </span><span class="kw-2">mut </span>json_value = <span class="macro">json!</span>({
-            <span class="string">&quot;parameters&quot;</span>: {
-                <span class="string">&quot;TRE&quot;</span>: {
-                    <span class="string">&quot;payload&quot;</span>: {
-                        <span class="string">&quot;filename&quot;</span>: <span class="string">&quot;test-file-name.docx&quot;
-                    </span>}
-                }
-            }
-        });
-        <span class="kw">let </span>err = create_docx_with_checksum(<span class="kw-2">&amp;</span>output_path.to_owned(), <span class="kw-2">&amp;mut </span>json_value).unwrap_err();
-        <span class="macro">assert_eq!</span>(
-            err.to_string(),
-            <span class="string">&quot;Judgment name is missing from the metadata json&quot;
-        </span>)
-    }
-
-    <span class="attr">#[test]
     </span><span class="kw">fn </span>test_create_docx_with_checksum_missing_metadata_filename() {
         <span class="kw">let </span>output_path = TempDir::new().unwrap();
         <span class="kw">let </span><span class="kw-2">mut </span>json_value = <span class="macro">json!</span>({
@@ -635,15 +605,15 @@
         <span class="kw">let </span>err = create_docx_with_checksum(<span class="kw-2">&amp;</span>output_path.to_owned(), <span class="kw-2">&amp;mut </span>json_value).unwrap_err();
         <span class="macro">assert_eq!</span>(
             err.to_string(),
-            <span class="string">&quot;Filename is missing from the metadata json&quot;
+            <span class="string">&quot;&#39;filename&#39; is missing from the metadata json&quot;
         </span>)
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_parse_metadata_json() {
+    </span><span class="kw">fn </span>test_parse_metadata_json_parses_data_into_value() {
         <span class="kw">let </span>output_dir = TempDir::new().unwrap();
         <span class="kw">let </span>metadata_path = <span class="kw-2">&amp;</span>output_dir.join(PathBuf::from(<span class="string">&quot;metadata.json&quot;</span>));
-        fs::write(<span class="kw-2">&amp;</span>metadata_path, <span class="string">&quot;{\&quot;a\&quot;: \&quot;b\&quot;}&quot;</span>.as_bytes()).unwrap();
+        fs::write(<span class="kw-2">&amp;</span>metadata_path, <span class="string">r#&quot;{&quot;a&quot;: &quot;b&quot;}&quot;#</span>.as_bytes()).unwrap();
         <span class="kw">let </span>json = parse_metadata_json(<span class="kw-2">&amp;</span>metadata_path).unwrap();
         <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span>json[<span class="string">&quot;a&quot;</span>], <span class="string">&quot;b&quot;</span>)
     }
@@ -670,6 +640,8 @@
             <span class="string">&quot;parameters&quot;</span>: {
                 <span class="string">&quot;TDR&quot;</span>: {
                     <span class="string">&quot;Contact-Email&quot; </span>: <span class="string">&quot;test-email&quot;</span>,
+                    <span class="string">&quot;Contact-Email2&quot;</span>: <span class="string">&quot;test-email-2&quot;</span>,
+                    <span class="string">&quot;TDR-Contact-Name&quot;</span>: <span class="string">&quot;tdr-contact-name&quot;</span>,
                     <span class="string">&quot;Contact-Name&quot; </span>: <span class="string">&quot;test-name&quot;</span>,
                     <span class="string">&quot;Document-Checksum-sha256&quot;</span>: <span class="string">&quot;test-checksum&quot;
                 </span>}
@@ -677,12 +649,12 @@
         });
         update_json_file(<span class="kw-2">&amp;</span>metadata_path, <span class="string">&quot;abcde&quot;</span>.to_owned(), <span class="kw-2">&amp;mut </span>json_value).unwrap();
         <span class="kw">let </span>metadata_json_string = read_to_string(<span class="kw-2">&amp;</span>metadata_path).unwrap();
-        <span class="kw">let </span>expected_json = <span class="string">&quot;{\&quot;parameters\&quot;:{\&quot;TDR\&quot;:{\&quot;Contact-Email\&quot;:\&quot;XXXXXXXXX\&quot;,\&quot;Contact-Name\&quot;:\&quot;XXXXXXXXX\&quot;,\&quot;Document-Checksum-sha256\&quot;:\&quot;abcde\&quot;}}}&quot;</span>;
+        <span class="kw">let </span>expected_json = <span class="string">r#&quot;{&quot;parameters&quot;:{&quot;TDR&quot;:{&quot;Contact-Email&quot;:&quot;XXXXXXXXX&quot;,&quot;Contact-Email2&quot;:&quot;test-email-2&quot;,&quot;Contact-Name&quot;:&quot;XXXXXXXXX&quot;,&quot;Document-Checksum-sha256&quot;:&quot;abcde&quot;,&quot;TDR-Contact-Name&quot;:&quot;tdr-contact-name&quot;}}}&quot;#</span>;
         <span class="macro">assert_eq!</span>(metadata_json_string, expected_json);
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_tar_folder() {
+    </span><span class="kw">fn </span>test_tar_folder_creates_a_new_tar() {
         <span class="kw">let </span>tar_dir = TempDir::new().unwrap();
         <span class="kw">let </span>output_dir = TempDir::new().unwrap();
         <span class="kw">let </span>folder_name: String = String::from(<span class="string">&quot;test_name&quot;</span>);
