@@ -2,6 +2,7 @@ name: DR2 Release Anonymiser Binary and docker image
 on:
   push:
     branches:
+      - deploy-job-fixes
       - main
 permissions:
   id-token: write
