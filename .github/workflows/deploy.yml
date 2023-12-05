@@ -37,6 +37,7 @@ jobs:
         with:
           registry: public.ecr.aws
       - run: |
+          apt-get install musl-tools
           rustup target add x86_64-unknown-linux-musl
           cargo build --release --target x86_64-unknown-linux-musl
           docker build -t public.ecr.aws/u4s1g5v1/anonymiser .
