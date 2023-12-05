@@ -16,7 +16,7 @@ jobs:
         with:
           repo-name: dr2-court-document-package-anonymiser
       - run: |
-          cargo build --release -p anonymiser_local_script
+          cargo build --release -p anonymiser
           git tag ${{ steps.next-tag.outputs.next-version }}
           git push origin ${{ steps.next-tag.outputs.next-version }}
           gh release create ${{ steps.next-tag.outputs.next-version }} target/release/anonymiser
@@ -44,8 +44,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          ref: 'gh-pages'
       - run:  |
           cargo doc --no-deps --workspace --document-private-items
           git config --global user.email digitalpreservation@nationalarchives.gov.uk
