@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `lambda/src/lib.rs`."><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="lambda" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `lambda/src/lib.rs`."><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="lambda" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.2 (25ef9e3d8 2024-04-09)" data-channel="1.77.2" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../lambda/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -207,9 +209,9 @@
 //! Given the following input:
 //! ```json
 //! {
-//!   &quot;parameters&quot;: {
-//!     &quot;s3Bucket&quot;: &quot;input-bucket&quot;,
-//!     &quot;s3Key&quot;: &quot;TRE-TDR-2023-ABC.tar.gz&quot;
+//!   "parameters": {
+//!     "s3Bucket": "input-bucket",
+//!     "s3Key": "TRE-TDR-2023-ABC.tar.gz"
 //!   }
 //! }
 //! ```
@@ -240,7 +242,7 @@
 }
 
 <span class="attr">#[derive(Deserialize, Serialize)]
-#[serde(rename_all = <span class="string">&quot;camelCase&quot;</span>)]
+#[serde(rename_all = <span class="string">"camelCase"</span>)]
 </span><span class="kw">struct </span>S3Details {
     status: String,
     reference: String,
@@ -260,7 +262,7 @@
     <span class="kw">let </span>body = message
         .body
         .as_ref()
-        .ok_or(<span class="string">&quot;No body found in the SQS message&quot;</span>)<span class="question-mark">?</span>;
+        .ok_or(<span class="string">"No body found in the SQS message"</span>)<span class="question-mark">?</span>;
     <span class="kw">let </span>s3_client = create_s3_client(s3_endpoint_url).<span class="kw">await</span>;
     <span class="kw">let </span>sqs_client = create_sqs_client(sqs_endpoint_url).<span class="kw">await</span>;
 
@@ -273,19 +275,19 @@
         <span class="kw-2">&amp;</span>working_directory,
     )
     .<span class="kw">await</span><span class="question-mark">?</span>;
-    <span class="kw">let </span>output_path = <span class="kw-2">&amp;</span>working_directory.join(PathBuf::from(<span class="string">&quot;output&quot;</span>));
+    <span class="kw">let </span>output_path = <span class="kw-2">&amp;</span>working_directory.join(PathBuf::from(<span class="string">"output"</span>));
     fs::create_dir_all(output_path)<span class="question-mark">?</span>;
     <span class="kw">let </span>output_tar_path = process_package(output_path, <span class="kw-2">&amp;</span>input_file_path)<span class="question-mark">?</span>;
     <span class="kw">let </span>file_name = output_tar_path
         .file_name()
         .and_then(|file_name_as_os_string| file_name_as_os_string.to_str())
-        .expect(<span class="string">&quot;Cannot parse file name from output path&quot;</span>);
+        .expect(<span class="string">"Cannot parse file name from output path"</span>);
 
-    <span class="kw">let </span>output_bucket = std::env::var(<span class="string">&quot;OUTPUT_BUCKET&quot;</span>)<span class="question-mark">?</span>;
+    <span class="kw">let </span>output_bucket = std::env::var(<span class="string">"OUTPUT_BUCKET"</span>)<span class="question-mark">?</span>;
     upload(<span class="kw-2">&amp;</span>s3_client, <span class="kw-2">&amp;</span>output_tar_path, <span class="kw-2">&amp;</span>output_bucket, file_name).<span class="kw">await</span><span class="question-mark">?</span>;
 
-    <span class="kw">let </span>output_queue = std::env::var(<span class="string">&quot;OUTPUT_QUEUE&quot;</span>)<span class="question-mark">?</span>;
-    <span class="kw">let </span>reference = parameters.reference.replace(<span class="string">&quot;TDR&quot;</span>, <span class="string">&quot;TST&quot;</span>);
+    <span class="kw">let </span>output_queue = std::env::var(<span class="string">"OUTPUT_QUEUE"</span>)<span class="question-mark">?</span>;
+    <span class="kw">let </span>reference = parameters.reference.replace(<span class="string">"TDR"</span>, <span class="string">"TST"</span>);
     <span class="kw">let </span>status = parameters.status;
     <span class="kw">let </span>output_message_body = MessageBody {
         parameters: S3Details {
@@ -352,15 +354,15 @@
 
 <span class="doccomment">/// # Creates an SQS client
 </span><span class="kw">async fn </span>create_sqs_client(potential_endpoint_url: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;) -&gt; SQSClient {
-    <span class="kw">let </span>config = aws_config(<span class="string">&quot;sqs&quot;</span>, potential_endpoint_url).<span class="kw">await</span>;
+    <span class="kw">let </span>config = aws_config(<span class="string">"sqs"</span>, potential_endpoint_url).<span class="kw">await</span>;
     SQSClient::new(<span class="kw-2">&amp;</span>config)
 }
 
 <span class="doccomment">/// # Creates an AWS SDK config object
 </span><span class="kw">async fn </span>aws_config(service: <span class="kw-2">&amp;</span>str, potential_endpoint_url: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;) -&gt; SdkConfig {
-    <span class="kw">let </span>default_endpoint = <span class="macro">format!</span>(<span class="string">&quot;https://{service}.eu-west-2.amazonaws.com&quot;</span>);
+    <span class="kw">let </span>default_endpoint = <span class="macro">format!</span>(<span class="string">"https://{service}.eu-west-2.amazonaws.com"</span>);
     <span class="kw">let </span>endpoint_url = potential_endpoint_url.unwrap_or(default_endpoint.as_str());
-    <span class="kw">let </span>region_provider = RegionProviderChain::default_provider().or_else(<span class="string">&quot;eu-west-2&quot;</span>);
+    <span class="kw">let </span>region_provider = RegionProviderChain::default_provider().or_else(<span class="string">"eu-west-2"</span>);
 
     aws_config::defaults(BehaviorVersion::latest())
         .region(region_provider)
@@ -371,7 +373,7 @@
 
 <span class="doccomment">/// # Creates an S3 client
 </span><span class="kw">async fn </span>create_s3_client(potential_endpoint_url: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;) -&gt; S3Client {
-    <span class="kw">let </span>config = aws_config(<span class="string">&quot;s3&quot;</span>, potential_endpoint_url).<span class="kw">await</span>;
+    <span class="kw">let </span>config = aws_config(<span class="string">"s3"</span>, potential_endpoint_url).<span class="kw">await</span>;
     S3Client::new(<span class="kw-2">&amp;</span>config)
 }
 
@@ -384,21 +386,21 @@
         <span class="kw">let </span>client = create_s3_client(<span class="prelude-val">None</span>).<span class="kw">await</span>;
         <span class="kw">let </span>config = client.config();
 
-        <span class="macro">assert_eq!</span>(config.region().unwrap().to_string(), <span class="string">&quot;eu-west-2&quot;</span>);
+        <span class="macro">assert_eq!</span>(config.region().unwrap().to_string(), <span class="string">"eu-west-2"</span>);
     }
 
     <span class="attr">#[tokio::test]
     </span><span class="kw">async fn </span>test_aws_config_endpoint_url() {
-        <span class="kw">let </span>config_default_endpoint = aws_config(<span class="string">&quot;test&quot;</span>, <span class="prelude-val">None</span>).<span class="kw">await</span>;
+        <span class="kw">let </span>config_default_endpoint = aws_config(<span class="string">"test"</span>, <span class="prelude-val">None</span>).<span class="kw">await</span>;
         <span class="macro">assert_eq!</span>(
             config_default_endpoint.endpoint_url().unwrap(),
-            <span class="string">&quot;https://test.eu-west-2.amazonaws.com&quot;
+            <span class="string">"https://test.eu-west-2.amazonaws.com"
         </span>);
 
-        <span class="kw">let </span>config_custom_endpoint = aws_config(<span class="string">&quot;test&quot;</span>, <span class="prelude-val">Some</span>(<span class="string">&quot;https://example.com&quot;</span>)).<span class="kw">await</span>;
+        <span class="kw">let </span>config_custom_endpoint = aws_config(<span class="string">"test"</span>, <span class="prelude-val">Some</span>(<span class="string">"https://example.com"</span>)).<span class="kw">await</span>;
         <span class="macro">assert_eq!</span>(
             config_custom_endpoint.endpoint_url().unwrap(),
-            <span class="string">&quot;https://example.com&quot;
+            <span class="string">"https://example.com"
         </span>);
     }
 }
