@@ -1,0 +1,1 @@
+searchState.loadedDescShard("anonymiser", 0, "Anonymiser script\nThe input files and output directory\nProcess the input arguments\nReturns the argument unchanged.\nCalls <code>U::from(self)</code>.\nThe entrypoint for the anonymiser script")
