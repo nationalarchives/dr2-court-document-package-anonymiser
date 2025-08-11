@@ -10,7 +10,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@8edcb1bdb4e267140fa742c62e395cd74f332709
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
       - id: next-tag
         uses: nationalarchives/dr2-github-actions/.github/actions/get-next-version@917201e254f112ff041b952dae76ef767cae7378
         with:
@@ -25,7 +25,7 @@ jobs:
   docker-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@8edcb1bdb4e267140fa742c62e395cd74f332709
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
       - name: Configure AWS credentials for ECR
         uses: aws-actions/configure-aws-credentials@51f55603786c3ffd12ca4774eaa071929349df8e
         with:
@@ -44,7 +44,7 @@ jobs:
   documentation-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@8edcb1bdb4e267140fa742c62e395cd74f332709
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
         with:
           fetch-depth: '0'
       - run:  |
@@ -60,7 +60,7 @@ jobs:
   deploy-lambda:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@8edcb1bdb4e267140fa742c62e395cd74f332709
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
       - run: gh workflow run deploy_lambda.yml
         env:
           GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
