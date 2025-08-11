@@ -28,7 +28,7 @@ jobs:
             print(f"role-name={'${{ github.event.inputs.environment }}'.title()}DPGithubActionsDeployLambdaRole", file=fh)
         shell: python
       - name: Configure AWS credentials for Lambda
-        uses: aws-actions/configure-aws-credentials@51f55603786c3ffd12ca4774eaa071929349df8e
+        uses: aws-actions/configure-aws-credentials@aa1f74b81b53cb3adb28afcdb21d7b9f3fceea98
         with:
           role-to-assume: arn:aws:iam::${{ secrets.ACCOUNT_NUMBER }}:role/${{ steps.role-name.outputs.role-name }}
           aws-region: eu-west-2
