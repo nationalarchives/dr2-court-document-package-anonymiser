@@ -27,7 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
       - name: Configure AWS credentials for ECR
-        uses: aws-actions/configure-aws-credentials@d4695650384537945e0b565ee73a714d361bcb04
+        uses: aws-actions/configure-aws-credentials@5f81b77081d9eb79d8f9cc6ab6880645209baae7
         with:
           role-to-assume: arn:aws:iam::${{ secrets.MANAGEMENT_ACCOUNT_NUMBER }}:role/MgmtDPGithubImageDeploy
           aws-region: us-east-1
